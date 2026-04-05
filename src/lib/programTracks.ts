@@ -1,5 +1,5 @@
 /** YouTube + practice content keyed by roadmap template + study level. */
-
+import { WEB_QUESTIONS, DATA_QUESTIONS } from './questionBank'
 export type VideoRef = { title: string; url: string }
 export type PracticeQ = {
   question: string
@@ -349,6 +349,33 @@ const webUnitsIntermediate: ProgramUnit[] = webUnitsBasic.map((u) => ({
   ],
 }))
 
+function padTo90Days(units: ProgramUnit[]): ProgramUnit[] {
+  const result: ProgramUnit[] = []
+  for (let i = 0; i < 90; i++) {
+    const base = units[i % units.length]
+    result.push({
+      ...base,
+      id: `${base.id}-day${i + 1}`,
+      title: `${base.title} (Part ${Math.floor(i / units.length) + 1})`,
+    })
+  }
+  return result
+}
+
+function padTo20Bits(units: ProgramUnit[], trackType: 'web' | 'data'): ProgramUnit[] {
+  const bank = trackType === 'web' ? WEB_QUESTIONS : DATA_QUESTIONS
+  let bankCursor = 0
+
+  return units.map((u) => {
+    const practice = [...u.practice]
+    while (practice.length < 20) {
+      practice.push(bank[bankCursor % bank.length])
+      bankCursor++
+    }
+    return { ...u, practice }
+  })
+}
+
 export function getProgramTrack(
   templateId: string,
   studyLevel: 'basic' | 'intermediate' | null,
@@ -360,14 +387,24 @@ export function getProgramTrack(
   if (templateId === 'data-analytics') {
     return {
       title: 'Data & analytics roadmap',
-      units: level === 'intermediate' ? analyticsUnitsIntermediate : analyticsUnitsBasic,
-      milestoneEvery: 3,
+      units: padTo20Bits(
+        padTo90Days(
+          level === 'intermediate'
+            ? analyticsUnitsIntermediate
+            : analyticsUnitsBasic,
+        ), 'data'
+      ),
+      milestoneEvery: 30,
     }
   }
 
   return {
     title: 'Web development roadmap',
-    units: level === 'intermediate' ? webUnitsIntermediate : webUnitsBasic,
-    milestoneEvery: 3,
+    units: padTo20Bits(
+      padTo90Days(
+        level === 'intermediate' ? webUnitsIntermediate : webUnitsBasic,
+      ), 'web'
+    ),
+    milestoneEvery: 30,
   }
 }

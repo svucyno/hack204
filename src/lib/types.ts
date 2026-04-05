@@ -28,6 +28,10 @@ export type LearningProgressStateV1 = {
   currentUnitIndex: number
   /** Milestone phases already celebrated (1 = after 3 units, 2 after 6, …) */
   milestonesEarned: number[]
+  /** Consecutive days with at least one unit completed */
+  streak: number
+  /** Last ISO date (YYYY-MM-DD) that advanced the streak */
+  lastStreakDate: string
   updatedAt: string
 }
 
@@ -38,6 +42,8 @@ export function createEmptyProgress(): LearningProgressStateV1 {
     unitScores: {},
     currentUnitIndex: 0,
     milestonesEarned: [],
+    streak: 0,
+    lastStreakDate: '',
     updatedAt: new Date().toISOString(),
   }
 }

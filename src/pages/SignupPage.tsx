@@ -92,7 +92,8 @@ export function SignupPage() {
   const [bandwidth, setBandwidth] = useState(4)
   const [roadmapLoading, setRoadmapLoading] = useState(false)
   const [skillCatalog, setSkillCatalog] = useState<string[]>([])
-  const [catalogQuery, setCatalogQuery] = useState('')
+  const [pickSkill, setPickSkill] = useState('')
+  const [pickLevel, setPickLevel] = useState<SkillRow['level']>('intermediate')
   const [experienceStage, setExperienceStage] =
     useState<ExperienceStage>('intermediate')
   /** Student track depth — not used for Fresher */
@@ -115,15 +116,13 @@ export function SignupPage() {
     () => new Set(skills.map((s) => s.name)),
     [skills],
   )
-  const filteredCatalog = useMemo(
-    () =>
-      skillCatalog.filter(
-        (n) =>
-          !skillNamesTaken.has(n) &&
-          n.toLowerCase().includes(catalogQuery.trim().toLowerCase()),
-      ),
-    [skillCatalog, skillNamesTaken, catalogQuery],
-  )
+
+  function addSkillFromList() {
+    if (!pickSkill.trim()) return
+    if (skillNamesTaken.has(pickSkill)) return
+    setSkills((prev) => [...prev, { name: pickSkill, level: pickLevel }])
+    setPickSkill('')
+  }
 
   useEffect(() => {
     void apiRoadmapOptions().then((r) => {
@@ -521,19 +520,19 @@ export function SignupPage() {
           <div className={CARD + ' space-y-5'}>
             <div>
               <h2 className="text-lg font-semibold text-white">
-                Your level &amp; skills
+                Level &amp; skills
               </h2>
               <p className="mt-1 text-sm text-zinc-400">
-                <strong className="text-zinc-300">Fresher</strong> = no daily
-                exams. Use the catalog to add skills (search + tap).
+                Choose stage, then add skills as <strong>name · level</strong>{' '}
+                (resume/PDF still extracts skills on step 4).
               </p>
             </div>
 
             <div>
               <p className="mb-2 text-xs font-medium uppercase tracking-wide text-zinc-500">
-                Experience stage
+                Stage
               </p>
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="flex flex-wrap gap-2">
                 {EXPERIENCE_STAGES.map((s) => {
                   const on = experienceStage === s.id
                   return (
@@ -541,19 +540,14 @@ export function SignupPage() {
                       key={s.id}
                       type="button"
                       onClick={() => setExperienceStage(s.id)}
-                      className={`rounded-xl border p-3.5 text-left text-sm transition ${
+                      className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
                         on
                           ? s.ringActive
                           : 'border-zinc-600 bg-zinc-950/40 hover:border-zinc-500'
                       }`}
                     >
-                      <span
-                        className={`font-semibold ${on ? s.titleActive : 'text-zinc-300'}`}
-                      >
+                      <span className={on ? s.titleActive : 'text-zinc-300'}>
                         {s.title}
-                      </span>
-                      <span className="mt-1 block text-xs leading-relaxed text-zinc-500">
-                        {s.description}
                       </span>
                     </button>
                   )
@@ -602,38 +596,60 @@ export function SignupPage() {
             ) : null}
 
             <div>
-              <p className="mb-2 text-sm font-medium text-zinc-300">
-                Your skills
-              </p>
+              <p className="mb-2 text-sm font-medium text-zinc-300">Skills</p>
               {experienceStage === 'fresher' && skills.length === 0 ? (
                 <p className="mb-2 text-xs text-zinc-500">
-                  Optional for Fresher — add from the catalog or extract a resume
-                  when you can.
+                  Optional for Fresher.
                 </p>
               ) : null}
-              <ul className="max-h-[220px] space-y-2 overflow-y-auto pr-1">
+              <div className="mb-3 flex flex-wrap items-end gap-2">
+                <label className="min-w-[140px] flex-1 text-left text-xs text-zinc-400">
+                  Skill
+                  <select
+                    className={INPUT + ' mt-1'}
+                    value={pickSkill}
+                    onChange={(e) => setPickSkill(e.target.value)}
+                  >
+                    <option value="">Select…</option>
+                    {skillCatalog.map((n) => (
+                      <option key={n} value={n}>
+                        {n}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="w-36 text-left text-xs text-zinc-400">
+                  Level
+                  <select
+                    className={INPUT + ' mt-1'}
+                    value={pickLevel}
+                    onChange={(e) =>
+                      setPickLevel(e.target.value as SkillRow['level'])
+                    }
+                  >
+                    <option value="basic">basic</option>
+                    <option value="intermediate">intermediate</option>
+                    <option value="advanced">advanced</option>
+                  </select>
+                </label>
+                <button
+                  type="button"
+                  className={BTN_SECONDARY + ' shrink-0'}
+                  onClick={() => addSkillFromList()}
+                >
+                  Add
+                </button>
+              </div>
+              <ul className="max-h-[200px] space-y-1.5 overflow-y-auto pr-1 text-sm">
                 {skills.map((s, i) => (
                   <li
                     key={`${s.name}-${i}`}
-                    className="flex flex-wrap items-center gap-2 rounded-xl border border-zinc-700/60 bg-zinc-950/50 p-3"
+                    className="flex items-center justify-between gap-2 rounded-lg border border-zinc-700/50 bg-zinc-950/50 px-3 py-2"
                   >
-                    <span className="min-w-0 flex-1 text-sm font-medium text-zinc-200">
-                      {s.name}
+                    <span className="text-zinc-200">
+                      {s.name}{' '}
+                      <span className="text-zinc-500">· {s.level}</span>
                     </span>
-                    <select
-                      className="rounded-lg border border-zinc-600 bg-zinc-900 px-2 py-1.5 text-sm"
-                      value={s.level}
-                      onChange={(e) => {
-                        const v = e.target.value as SkillRow['level']
-                        setSkills((prev) =>
-                          prev.map((x, j) => (j === i ? { ...x, level: v } : x)),
-                        )
-                      }}
-                    >
-                      <option value="basic">Basic</option>
-                      <option value="intermediate">Intermediate</option>
-                      <option value="advanced">Advanced</option>
-                    </select>
                     <button
                       type="button"
                       className="text-xs text-red-400 hover:text-red-300"
@@ -646,41 +662,6 @@ export function SignupPage() {
                   </li>
                 ))}
               </ul>
-            </div>
-
-            <div>
-              <p className="mb-2 text-sm font-medium text-zinc-300">
-                Add from catalog
-              </p>
-              <input
-                type="search"
-                placeholder="Search skills…"
-                className={INPUT}
-                value={catalogQuery}
-                onChange={(e) => setCatalogQuery(e.target.value)}
-              />
-              <div className="mt-2 flex max-h-40 flex-wrap gap-2 overflow-y-auto rounded-xl border border-zinc-700/60 bg-zinc-950/40 p-2">
-                {filteredCatalog.slice(0, 80).map((n) => (
-                  <button
-                    key={n}
-                    type="button"
-                    className="rounded-full border border-zinc-600 bg-zinc-800/80 px-2.5 py-1 text-xs text-zinc-200 hover:border-amber-500/50 hover:text-amber-200"
-                    onClick={() =>
-                      setSkills((prev) => [
-                        ...prev,
-                        { name: n, level: 'intermediate' },
-                      ])
-                    }
-                  >
-                    + {n}
-                  </button>
-                ))}
-                {filteredCatalog.length === 0 ? (
-                  <span className="text-xs text-zinc-600">
-                    No matches — clear search or extract resume again.
-                  </span>
-                ) : null}
-              </div>
             </div>
 
             <label className="block text-sm font-medium text-zinc-300">
