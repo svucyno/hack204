@@ -13,6 +13,7 @@ type AuthContextValue = {
   token: string | null
   me: MeResponse['user'] | null
   profile: MeResponse['profile'] | null
+  learningState: any | null
   loading: boolean
   login: (email: string, password: string) => Promise<void>
   register: (email: string, password: string, name: string) => Promise<void>
@@ -30,6 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   )
   const [me, setMe] = useState<MeResponse['user'] | null>(null)
   const [profile, setProfile] = useState<MeResponse['profile'] | null>(null)
+  const [learningState, setLearningState] = useState<any | null>(null)
   const [loading, setLoading] = useState(true)
 
   const refreshMe = useCallback(async () => {
@@ -43,11 +45,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await apiMe(token)
       setMe(data.user)
       setProfile(data.profile)
+      setLearningState(data.learningState)
     } catch {
       setToken(null)
       localStorage.removeItem(STORAGE)
       setMe(null)
       setProfile(null)
+      setLearningState(null)
     } finally {
       setLoading(false)
     }
@@ -66,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const data = await apiMe(t)
     setMe(data.user)
     setProfile(data.profile)
+    setLearningState(data.learningState)
     setLoading(false)
   }, [])
 
@@ -76,6 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setToken(t)
       setMe(user)
       setProfile(null)
+      setLearningState(null)
       setLoading(false)
     },
     [],
@@ -86,6 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setToken(null)
     setMe(null)
     setProfile(null)
+    setLearningState(null)
   }, [])
 
   const value = useMemo(
@@ -93,13 +100,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       token,
       me,
       profile,
+      learningState,
       loading,
       login,
       register,
       logout,
       refreshMe,
     }),
-    [token, me, profile, loading, login, register, logout, refreshMe],
+    [token, me, profile, learningState, loading, login, register, logout, refreshMe],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

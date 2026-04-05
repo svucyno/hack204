@@ -239,14 +239,14 @@ export function SignupPage() {
           : { studyLevel: studentStudyLevel }),
       })
       await refreshMe()
-      navigate('/learn', { replace: true })
+      navigate('/dashboard', { replace: true })
     } catch (e2) {
       setErr(e2 instanceof Error ? e2.message : 'Save failed')
     }
   }
 
   if (!loading && token && me?.onboardingComplete) {
-    return <Navigate to="/learn" replace />
+    return <Navigate to="/dashboard" replace />
   }
 
   return (

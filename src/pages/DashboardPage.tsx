@@ -35,10 +35,11 @@ export function DashboardPage() {
         <nav className="hidden md:flex items-center gap-6 text-sm text-zinc-400">
           <Link to="/dashboard" className="text-zinc-200 hover:text-white">Dashboard</Link>
           <Link to="/learn" className="hover:text-white">Roadmap</Link>
-          <button className="hover:text-white">Mentor</button>
-          <button className="hover:text-white">Reports</button>
-          <button className="hover:text-white">Jobs</button>
-          <button className="hover:text-white">Settings</button>
+          <Link to="/mentor" className="hover:text-white">Mentor</Link>
+          <Link to="/reports" className="hover:text-white">Reports</Link>
+          <Link to="/jobs" className="hover:text-white">Jobs</Link>
+          <Link to="/resume" className="hover:text-white">Resume</Link>
+          <Link to="/settings" className="hover:text-white">Settings</Link>
           <div className="text-zinc-500 ml-4">{me?.email || 'user@example.com'}</div>
           <button onClick={() => logout()} className="text-red-400 hover:text-red-300 ml-2 font-medium">
             Logout
@@ -60,6 +61,9 @@ export function DashboardPage() {
             </button>
             <Link to="/learn" className="rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-3 font-bold text-white shadow-lg hover:shadow-blue-500/20 transition-all text-sm block">
               View Roadmap
+            </Link>
+            <Link to="/resume" className="rounded-xl bg-gradient-to-r border border-orange-500/30 bg-orange-950/20 text-orange-400 px-6 py-3 font-bold shadow-lg hover:bg-orange-500/10 transition-all text-sm block">
+              ATS Resume
             </Link>
           </div>
         </div>

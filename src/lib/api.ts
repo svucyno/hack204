@@ -20,6 +20,23 @@ async function parseJson<T>(res: Response): Promise<T> {
   return data as T
 }
 
+export async function apiGenerateResume(
+  token: string,
+  data: { goal: string; skills: string[]; name: string; experienceStage: string }
+) {
+  const res = await fetch(`${base()}/api/resume/generate`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+  const d = await res.json()
+  if (!res.ok) throw new Error(d.error || 'Failed to generate resume')
+  return d
+}
+
 function base() {
   return ''
 }

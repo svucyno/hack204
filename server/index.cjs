@@ -314,7 +314,7 @@ app.post('/api/assistant', authMiddleware, async (req, res) => {
     return res.status(400).json({ error: 'message required' })
   }
   const key = process.env.OPENAI_API_KEY
-  if (key) {
+  if (key && key !== 'your_key_here') {
     try {
       const r = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
@@ -362,6 +362,53 @@ app.post('/api/assistant', authMiddleware, async (req, res) => {
   })
 })
 
+app.post('/api/resume/generate', authMiddleware, async (req, res) => {
+  const goal = String(req.body.goal || '').trim()
+  const skills = Array.isArray(req.body.skills) ? req.body.skills : []
+  const name = String(req.body.name || '').trim()
+  const experienceStage = String(req.body.experienceStage || '').trim()
+  
+  const key = process.env.OPENAI_API_KEY
+  if (key && key !== 'your_key_here') {
+    try {
+      const r = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${key}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an expert ATS resume writer. Output a highly optimized, fully formatted ATS-friendly resume in Markdown format based on the user parameters.'
+            },
+            {
+              role: 'user',
+              content: `Create an ATS-friendly resume for ${name}. Experience Stage: ${experienceStage}. \nTarget Goal: ${goal}\nSkills: ${skills.join(', ')}\nEnsure it has clear sections: Summary, Skills, Experience (generate impressive dummy experience relevant to the goal), and Education. Format entirely in Markdown.`,
+            },
+          ],
+          max_tokens: 1500,
+        }),
+      })
+      const j = await r.json()
+      if (!r.ok) {
+        return res.status(502).json({ error: j.error?.message || 'AI service error' })
+      }
+      return res.json({ resumeMarkdown: j.choices?.[0]?.message?.content || '' })
+    } catch (e) {
+      console.error(e)
+      return res.status(502).json({ error: 'AI request failed' })
+    }
+  }
+
+  // Offline Mock Response
+  res.json({
+    resumeMarkdown: `# ${name || 'John Doe'}\n\n**Email**: contact@example.com | **LinkedIn**: linkedin.com/in/johndoe\n\n## Professional Summary\nHighly motivated professional targeting a role in **${goal || 'Software Engineering'}**. Eager to leverage technical skills in a challenging environment. Level: **${experienceStage || 'Beginner'}**.\n\n## Technical Skills\n- **Core**: ${skills.length > 0 ? skills.join(', ') : 'React, TypeScript, Node.js'}\n\n## Professional Experience\n\n### Software Engineer Trainee\n*Cynosure Learning* | *Present*\n- Built multiple full-stack applications showcasing proficiency in modern tech stacks.\n- Adhered to best practices for code quality and ATS-friendly documentation.\n\n## Education\n\n### B.S. in Computer Science\n*State University* | *2024*`
+  })
+})
+
 app.post('/api/jobs/suggest', authMiddleware, (req, res) => {
   const goal = String(req.body.goal || '').trim()
   const skillsObjects = Array.isArray(req.body.skills) ? req.body.skills : []
@@ -387,6 +434,6 @@ app.put('/api/me/learning-state', authMiddleware, (req, res) => {
   res.json({ ok: true })
 })
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`LES API http://localhost:${PORT}`)
 })

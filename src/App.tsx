@@ -4,6 +4,11 @@ import { LearnPage } from './pages/LearnPage'
 import { LoginPage } from './pages/LoginPage'
 import { SignupPage } from './pages/SignupPage'
 import { DashboardPage } from './pages/DashboardPage'
+import { JobsPage } from './pages/JobsPage'
+import { MentorPage } from './pages/MentorPage'
+import { ReportsPage } from './pages/ReportsPage'
+import { SettingsPage } from './pages/SettingsPage'
+import { ResumePage } from './pages/ResumePage'
 
 function HomeRoute() {
   const { token, me, loading } = useAuth()
@@ -30,6 +35,11 @@ export default function App() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/learn" element={<LearnPage />} />
+          <Route path="/jobs" element={<JobsPage />} />
+          <Route path="/mentor" element={<MentorPage />} />
+          <Route path="/reports" element={<ReportsPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/resume" element={<ResumePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>

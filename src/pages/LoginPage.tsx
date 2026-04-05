@@ -14,7 +14,7 @@ export function LoginPage() {
   const [err, setErr] = useState<string | null>(null)
 
   if (!loading && token && me) {
-    if (me.onboardingComplete) return <Navigate to="/learn" replace />
+    if (me.onboardingComplete) return <Navigate to="/dashboard" replace />
     return <Navigate to="/signup" replace />
   }
 
