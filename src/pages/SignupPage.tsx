@@ -29,42 +29,42 @@ const EXPERIENCE_STAGES: {
   titleActive: string
   ringActive: string
 }[] = [
-  {
-    id: 'fresher',
-    title: 'Fresher',
-    description:
-      'Completely new — not comfortable with languages yet. No daily exams; only videos, tasks, and assignments. Skills optional.',
-    titleActive: 'text-emerald-200',
-    ringActive:
-      'border-emerald-500/70 bg-emerald-950/30 ring-2 ring-emerald-500/25',
-  },
-  {
-    id: 'beginner',
-    title: 'Beginner',
-    description:
-      'Some exposure. Daily exams (70%+). Weak spots go to Basic review.',
-    titleActive: 'text-sky-200',
-    ringActive: 'border-sky-500/70 bg-sky-950/30 ring-2 ring-sky-500/25',
-  },
-  {
-    id: 'intermediate',
-    title: 'Intermediate',
-    description:
-      'Built small projects. Daily exams (70%+). Basic review for failed items.',
-    titleActive: 'text-amber-200',
-    ringActive:
-      'border-amber-500/70 bg-amber-950/30 ring-2 ring-amber-500/25',
-  },
-  {
-    id: 'expert',
-    title: 'Expert',
-    description:
-      'Strong hands-on background. Standard track with daily exams.',
-    titleActive: 'text-violet-200',
-    ringActive:
-      'border-violet-500/70 bg-violet-950/30 ring-2 ring-violet-500/25',
-  },
-]
+    {
+      id: 'fresher',
+      title: 'Fresher',
+      description:
+        'Completely new — not comfortable with languages yet. No daily exams; only videos, tasks, and assignments. Skills optional.',
+      titleActive: 'text-emerald-200',
+      ringActive:
+        'border-emerald-500/70 bg-emerald-950/30 ring-2 ring-emerald-500/25',
+    },
+    {
+      id: 'beginner',
+      title: 'Beginner',
+      description:
+        'Some exposure. Daily exams (70%+). Weak spots go to Basic review.',
+      titleActive: 'text-sky-200',
+      ringActive: 'border-sky-500/70 bg-sky-950/30 ring-2 ring-sky-500/25',
+    },
+    {
+      id: 'intermediate',
+      title: 'Intermediate',
+      description:
+        'Built small projects. Daily exams (70%+). Basic review for failed items.',
+      titleActive: 'text-amber-200',
+      ringActive:
+        'border-amber-500/70 bg-amber-950/30 ring-2 ring-amber-500/25',
+    },
+    {
+      id: 'expert',
+      title: 'Expert',
+      description:
+        'Strong hands-on background. Standard track with daily exams.',
+      titleActive: 'text-violet-200',
+      ringActive:
+        'border-violet-500/70 bg-violet-950/30 ring-2 ring-violet-500/25',
+    },
+  ]
 
 export function SignupPage() {
   const navigate = useNavigate()
@@ -293,20 +293,18 @@ export function SignupPage() {
                 className="flex flex-1 flex-col items-center gap-1"
               >
                 <div
-                  className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${
-                    active
+                  className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${active
                       ? 'bg-gradient-to-br from-amber-400 to-orange-500 text-zinc-950 shadow-lg shadow-amber-900/40'
                       : done
                         ? 'bg-emerald-600/80 text-white'
                         : 'border border-zinc-600 bg-zinc-900 text-zinc-500'
-                  }`}
+                    }`}
                 >
                   {done ? '✓' : n}
                 </div>
                 <span
-                  className={`hidden text-center text-[10px] font-medium sm:block ${
-                    active ? 'text-amber-200' : 'text-zinc-600'
-                  }`}
+                  className={`hidden text-center text-[10px] font-medium sm:block ${active ? 'text-amber-200' : 'text-zinc-600'
+                    }`}
                 >
                   {label}
                 </span>
@@ -422,11 +420,10 @@ export function SignupPage() {
                   key={t.id}
                   type="button"
                   onClick={() => setSelectedTemplateId(t.id)}
-                  className={`w-full rounded-xl border p-3 text-left text-sm transition ${
-                    selectedTemplateId === t.id
+                  className={`w-full rounded-xl border p-3 text-left text-sm transition ${selectedTemplateId === t.id
                       ? 'border-amber-500/70 bg-amber-950/30 ring-2 ring-amber-500/30'
                       : 'border-zinc-600 bg-zinc-950/40 hover:border-zinc-500'
-                  }`}
+                    }`}
                 >
                   <span className="font-semibold text-white">{t.title}</span>
                   <span className="mt-1 block text-xs text-zinc-500">
@@ -540,11 +537,10 @@ export function SignupPage() {
                       key={s.id}
                       type="button"
                       onClick={() => setExperienceStage(s.id)}
-                      className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
-                        on
+                      className={`rounded-full border px-4 py-2 text-sm font-medium transition ${on
                           ? s.ringActive
                           : 'border-zinc-600 bg-zinc-950/40 hover:border-zinc-500'
-                      }`}
+                        }`}
                     >
                       <span className={on ? s.titleActive : 'text-zinc-300'}>
                         {s.title}
@@ -564,11 +560,10 @@ export function SignupPage() {
                   <button
                     type="button"
                     onClick={() => setStudentStudyLevel('basic')}
-                    className={`rounded-xl border p-3 text-left text-sm ${
-                      studentStudyLevel === 'basic'
+                    className={`rounded-xl border p-3 text-left text-sm ${studentStudyLevel === 'basic'
                         ? 'border-sky-500/70 bg-sky-950/30 ring-2 ring-sky-500/20'
                         : 'border-zinc-600 bg-zinc-950/40'
-                    }`}
+                      }`}
                   >
                     <span className="font-semibold text-sky-200">Basic</span>
                     <span className="mt-1 block text-xs text-zinc-500">
@@ -578,11 +573,10 @@ export function SignupPage() {
                   <button
                     type="button"
                     onClick={() => setStudentStudyLevel('intermediate')}
-                    className={`rounded-xl border p-3 text-left text-sm ${
-                      studentStudyLevel === 'intermediate'
+                    className={`rounded-xl border p-3 text-left text-sm ${studentStudyLevel === 'intermediate'
                         ? 'border-amber-500/70 bg-amber-950/30 ring-2 ring-amber-500/20'
                         : 'border-zinc-600 bg-zinc-950/40'
-                    }`}
+                      }`}
                   >
                     <span className="font-semibold text-amber-200">
                       Intermediate

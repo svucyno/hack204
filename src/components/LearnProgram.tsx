@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { jsPDF } from 'jspdf'
 import { apiAssistant, apiMe, apiPutLearningState } from '../lib/api'
 import {
   createEmptyProgress,
@@ -271,28 +272,78 @@ export function LearnProgram({
     )
   }
 
-  function downloadProgressJson() {
-    const pack = {
-      exportedAt: new Date().toISOString(),
-      profile: {
-        name: profile.name,
-        goal: profile.clientGoal,
-        templateId: profile.roadmapTemplateId,
-        experienceStage: profile.experienceStage,
-        studyLevel: profile.studyLevel,
-        skills: profile.skills,
-      },
-      track: track.title,
-      progress,
+  function downloadProgressPdf() {
+    const doc = new jsPDF()
+    let yPos = 20
+
+    // Title
+    doc.setFontSize(22)
+    doc.setTextColor(40, 40, 40)
+    doc.setFont("helvetica", "bold")
+    doc.text("Learning Progress Report", 20, yPos)
+    yPos += 15
+
+    // Profile section
+    doc.setFontSize(16)
+    doc.setTextColor(60, 60, 60)
+    doc.text("Student Details", 20, yPos)
+    yPos += 10
+
+    doc.setFontSize(12)
+    doc.setFont("helvetica", "normal")
+    doc.setTextColor(80, 80, 80)
+    doc.text(`Name: ${profile.name}`, 20, yPos); yPos += 8
+    doc.text(`Career Goal: ${profile.clientGoal || 'Not specified'}`, 20, yPos); yPos += 8
+    doc.text(`Studying Track: ${track.title}`, 20, yPos); yPos += 8
+    doc.text(`Experience Level: ${profile.experienceStage || 'Beginner'}`, 20, yPos); yPos += 12
+
+    // Progress Section
+    doc.setFontSize(16)
+    doc.setTextColor(60, 60, 60)
+    doc.setFont("helvetica", "bold")
+    doc.text("Current Status", 20, yPos)
+    yPos += 10
+
+    doc.setFontSize(12)
+    doc.setTextColor(80, 80, 80)
+    doc.setFont("helvetica", "normal")
+    doc.text(`Completion Rate: ${progressPct}%`, 20, yPos); yPos += 8
+    doc.text(`Active Day Streak: ${progress?.streak ?? 0} Days`, 20, yPos); yPos += 8
+    doc.text(`Completed Units: ${progress?.completedUnitIds?.length ?? 0} out of ${units.length}`, 20, yPos); yPos += 12
+
+    // Score History (if any)
+    if (progress && progress.unitScores && Object.keys(progress.unitScores).length > 0) {
+      doc.setFontSize(16)
+      doc.setTextColor(60, 60, 60)
+      doc.setFont("helvetica", "bold")
+      doc.text("Unit Scores", 20, yPos)
+      yPos += 10
+
+      doc.setFontSize(11)
+      doc.setFont("helvetica", "normal")
+      const scores = Object.entries(progress.unitScores).map(([id, score]) => {
+         const unitRef = units.find(u => u.id === id)
+         return `${unitRef ? unitRef.title : id}: ${score}%`
+      })
+
+      scores.forEach(s => {
+         doc.text(`• ${s}`, 20, yPos)
+         yPos += 6
+         if (yPos > 280) { // Add new page if list goes too long
+           doc.addPage()
+           yPos = 20
+         }
+      })
     }
-    const blob = new Blob([JSON.stringify(pack, null, 2)], {
-      type: 'application/json',
-    })
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = `learning-progress-${new Date().toISOString().slice(0, 10)}.json`
-    a.click()
-    URL.revokeObjectURL(a.href)
+
+    // Footer
+    yPos += 15
+    if (yPos > 280) { doc.addPage(); yPos = 20; }
+    doc.setFontSize(10)
+    doc.setTextColor(150, 150, 150)
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, yPos)
+
+    doc.save(`Progress-Report-${profile.name.replace(/\s+/g, '-')}.pdf`)
   }
 
   async function sendAi() {
@@ -366,14 +417,30 @@ export function LearnProgram({
           >
             AI
           </button>
-          <button
-            type="button"
-            className="rounded-lg border border-zinc-600 px-2.5 py-1 text-xs text-zinc-300 hover:bg-zinc-800"
-            onClick={() => downloadProgressJson()}
-            title="Download JSON"
-          >
-            ↓
-          </button>
+          <details className="relative">
+            <summary className="cursor-pointer list-none rounded-lg border border-zinc-600 px-2.5 py-1 text-xs text-zinc-200 hover:bg-zinc-800">
+              Progress
+            </summary>
+            <div className="absolute right-0 z-40 mt-1 min-w-[220px] rounded-lg border border-zinc-600 bg-zinc-900 p-3 shadow-xl">
+              <div className="flex flex-col gap-2">
+                <div className="text-xs text-zinc-300 space-y-1.5 border-b border-zinc-700 pb-3 mb-1">
+                  <p className="flex justify-between"><span className="text-zinc-500">Name:</span> <span>{profile.name}</span></p>
+                  <p className="flex justify-between"><span className="text-zinc-500">Goal:</span> <span className="truncate max-w-[120px]" title={profile.clientGoal || 'N/A'}>{profile.clientGoal || 'N/A'}</span></p>
+                  <p className="flex justify-between"><span className="text-zinc-500">Studying:</span> <span className="truncate max-w-[120px]" title={track.title}>{track.title}</span></p>
+                  <p className="flex justify-between"><span className="text-zinc-500">Completed:</span> <span className="text-amber-400 font-medium">{progressPct}%</span></p>
+                  <p className="flex justify-between"><span className="text-zinc-500">Streak:</span> <span className="text-orange-400 font-medium">{progress.streak} Days</span></p>
+                </div>
+                <button
+                  type="button"
+                  className="w-full rounded bg-zinc-800 px-3 py-2 text-center font-medium text-xs text-zinc-200 hover:bg-zinc-700 transition flex items-center justify-center gap-2"
+                  onClick={() => downloadProgressPdf()}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                  Download PDF Report
+                </button>
+              </div>
+            </div>
+          </details>
         </div>
       </div>
 
