@@ -1,0 +1,5 @@
+-- This project uses MongoDB (Motor), not SQL.
+-- Collections: users, profiles, assessments, answers, learning_paths,
+-- recommendations, progress_logs, chatbot_history, notifications,
+-- admin_logs, courses.
+-- Indexes are created at API startup via app/db/mongo.py::init_mongo_indexes.

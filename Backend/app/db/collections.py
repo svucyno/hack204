@@ -1,0 +1,13 @@
+"""MongoDB collection names."""
+
+USERS = "users"
+PROFILES = "profiles"
+ASSESSMENTS = "assessments"
+ANSWERS = "answers"
+LEARNING_PATHS = "learning_paths"
+RECOMMENDATIONS = "recommendations"
+PROGRESS_LOGS = "progress_logs"
+CHATBOT_HISTORY = "chatbot_history"
+NOTIFICATIONS = "notifications"
+ADMIN_LOGS = "admin_logs"
+COURSES = "courses"

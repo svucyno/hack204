@@ -1,0 +1,122 @@
+{
+  "info": {
+    "name": "AI Personalized Learning API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base", "value": "http://127.0.0.1:8000/api/v1" },
+    { "key": "access_token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth — Register",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base}}/auth/register",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"demo@example.com\",\n  \"password\": \"Demo123456\",\n  \"full_name\": \"Demo User\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Auth — Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base}}/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"learner@example.com\",\n  \"password\": \"Learner123!\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Auth — Me",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+        "url": "{{base}}/auth/me"
+      }
+    },
+    {
+      "name": "Profile — Get",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+        "url": "{{base}}/profile"
+      }
+    },
+    {
+      "name": "Learning — Create path",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{base}}/learning/path",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"goal_summary\": \"Master ML engineering\",\n  \"topics_available\": []\n}"
+        }
+      }
+    },
+    {
+      "name": "Quiz — Start session",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{base}}/quiz/session",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"topic_ids\": [\"py-basics\"],\n  \"num_questions\": 5,\n  \"include_coding\": false\n}"
+        }
+      }
+    },
+    {
+      "name": "Analysis — Dashboard",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+        "url": "{{base}}/analysis/dashboard"
+      }
+    },
+    {
+      "name": "Recommend — Items",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{base}}/recommend/items",
+        "body": { "mode": "raw", "raw": "{\n  \"limit\": 5\n}" }
+      }
+    },
+    {
+      "name": "Chatbot — Message",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{base}}/chatbot/message",
+        "body": { "mode": "raw", "raw": "{\n  \"message\": \"What should I study next?\"\n}" }
+      }
+    },
+    {
+      "name": "Admin — Stats",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+        "url": "{{base}}/admin/stats"
+      }
+    }
+  ]
+}
