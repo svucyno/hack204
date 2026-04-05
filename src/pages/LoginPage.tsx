@@ -13,8 +13,9 @@ export function LoginPage() {
   const [password, setPassword] = useState('')
   const [err, setErr] = useState<string | null>(null)
 
-  if (!loading && token && me?.onboardingComplete) {
-    return <Navigate to="/learn" replace />
+  if (!loading && token && me) {
+    if (me.onboardingComplete) return <Navigate to="/learn" replace />
+    return <Navigate to="/signup" replace />
   }
 
   async function onSubmit(e: React.FormEvent) {

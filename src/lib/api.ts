@@ -1,4 +1,9 @@
-import type { ExperienceStage, RoadmapTemplate, SkillRow } from './types'
+import type {
+  ExperienceStage,
+  LearningProgressStateV1,
+  RoadmapTemplate,
+  SkillRow,
+} from './types'
 
 async function parseJson<T>(res: Response): Promise<T> {
   const text = await res.text()
@@ -38,6 +43,8 @@ export type MeResponse = {
     dailyBandwidth: number
     learningPath: string
     experienceStage?: string
+    /** basic | intermediate; omitted for Fresher */
+    studyLevel?: string | null
   }
   learningState: unknown | null
 }
@@ -135,6 +142,7 @@ export async function apiPutOnboarding(
     roadmapTemplateId: string
     dailyBandwidth: number
     experienceStage: ExperienceStage
+    studyLevel?: 'basic' | 'intermediate' | null
   },
 ) {
   const res = await fetch(`${base()}/api/me/onboarding`, {
@@ -148,4 +156,34 @@ export async function apiPutOnboarding(
   return parseJson<{ user: MeResponse['user']; profile: MeResponse['profile'] }>(
     res,
   )
+}
+
+export async function apiPutLearningState(
+  token: string,
+  state: LearningProgressStateV1 | null,
+) {
+  const res = await fetch(`${base()}/api/me/learning-state`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ state }),
+  })
+  return parseJson<{ ok: boolean }>(res)
+}
+
+export async function apiAssistant(
+  token: string,
+  body: { message: string; context: string },
+) {
+  const res = await fetch(`${base()}/api/assistant`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(body),
+  })
+  return parseJson<{ reply: string }>(res)
 }

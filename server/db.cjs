@@ -37,6 +37,9 @@ function migrate() {
       `ALTER TABLE users ADD COLUMN learning_state_json TEXT`,
     )
   }
+  if (!names.has('study_level')) {
+    db.exec(`ALTER TABLE users ADD COLUMN study_level TEXT`)
+  }
 }
 
 db.exec(`
@@ -82,6 +85,7 @@ const updateOnboarding = db.prepare(`
     daily_bandwidth = @daily_bandwidth,
     learning_path = @learning_path,
     experience_stage = @experience_stage,
+    study_level = @study_level,
     onboarding_complete = @onboarding_complete
   WHERE id = @id
 `)

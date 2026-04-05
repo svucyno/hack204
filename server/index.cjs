@@ -77,6 +77,7 @@ function fullProfile(row) {
     resumeText: row.resume_text || '',
     learningPath,
     experienceStage,
+    studyLevel: row.study_level || null,
     skills,
     clientGoal: row.client_goal || '',
     roadmapTemplateId: row.roadmap_template_id || '',
@@ -244,6 +245,20 @@ app.put('/api/me/onboarding', authMiddleware, (req, res) => {
   }
   const learning_path = experience_stage === 'fresher' ? 'basic' : 'standard'
 
+  let study_level = null
+  if (experience_stage !== 'fresher') {
+    const sl = String(req.body.studyLevel || '')
+      .trim()
+      .toLowerCase()
+    if (!['basic', 'intermediate'].includes(sl)) {
+      return res.status(400).json({
+        error:
+          'Choose student level: basic or intermediate (not required for Fresher).',
+      })
+    }
+    study_level = sl
+  }
+
   if (!roadmapTemplateId) {
     return res.status(400).json({ error: 'roadmapTemplateId required' })
   }
@@ -279,6 +294,7 @@ app.put('/api/me/onboarding', authMiddleware, (req, res) => {
     daily_bandwidth: dailyBandwidth,
     learning_path,
     experience_stage,
+    study_level,
     onboarding_complete: 1,
   })
 
@@ -286,6 +302,61 @@ app.put('/api/me/onboarding', authMiddleware, (req, res) => {
   res.json({
     user: publicUser(updated),
     profile: fullProfile(updated),
+  })
+})
+
+app.post('/api/assistant', authMiddleware, async (req, res) => {
+  const message = String(req.body.message || '').trim()
+  const context = String(req.body.context || '').trim().slice(0, 6000)
+  if (!message) {
+    return res.status(400).json({ error: 'message required' })
+  }
+  const key = process.env.OPENAI_API_KEY
+  if (key) {
+    try {
+      const r = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${key}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+          messages: [
+            {
+              role: 'system',
+              content:
+                'You are a concise learning coach for software engineering and data analytics. Use short paragraphs and bullet points. If unsure, suggest concrete next steps.',
+            },
+            {
+              role: 'user',
+              content: `Program context:\n${context}\n\nLearner question:\n${message}`,
+            },
+          ],
+          max_tokens: 600,
+        }),
+      })
+      const j = await r.json()
+      if (!r.ok) {
+        return res.status(502).json({
+          error: j.error?.message || 'AI service error',
+        })
+      }
+      const text = j.choices?.[0]?.message?.content || ''
+      return res.json({ reply: text })
+    } catch (e) {
+      console.error(e)
+      return res.status(502).json({ error: 'AI request failed' })
+    }
+  }
+  res.json({
+    reply:
+      `Offline assistant (set OPENAI_API_KEY on the server for live AI).\n\n` +
+      `You asked: “${message.slice(0, 200)}${message.length > 200 ? '…' : ''}”\n\n` +
+      `• Split it into one 25‑minute focus block.\n` +
+      `• Re-run the practice questions for this unit.\n` +
+      `• Write a 3‑sentence summary of the video in your own words.\n` +
+      `• If it’s analytics: check definitions (metric vs dimension, cohort, funnel).`,
   })
 })
 

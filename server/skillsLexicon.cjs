@@ -20,6 +20,24 @@ const SKILL_CATALOG = [
   'Linux',
   'Data structures',
   'Algorithms',
+  /* Analytics & data (resume / PDF) */
+  'Excel',
+  'Google Analytics',
+  'Tableau',
+  'Power BI',
+  'Statistics',
+  'Data visualization',
+  'ETL',
+  'Machine learning',
+  'Pandas',
+  'NumPy',
+  'R',
+  'Spark',
+  'Snowflake',
+  'BigQuery',
+  'Looker',
+  'A/B testing',
+  'KPIs',
 ]
 
 function extractSkillsFromText(text) {
@@ -31,6 +49,10 @@ function extractSkillsFromText(text) {
   }
   if (/\bjs\b|\bjavascript\b/.test(lower)) found.add('JavaScript')
   if (/\bts\b|\btypescript\b/.test(lower)) found.add('TypeScript')
+  if (/\banalytics\b|\bbi\b|\bbusiness intelligence\b/.test(lower))
+    found.add('Data visualization')
+  if (/\bdata engineer/.test(lower)) found.add('ETL')
+  if (/\bdata scientist/.test(lower)) found.add('Machine learning')
   return [...found]
 }
 
