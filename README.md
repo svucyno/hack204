@@ -31,7 +31,7 @@ python -m venv .venv
 .\.venv\Scripts\activate
 pip install -r requirement.txt
 copy .env.example .env
-# Edit .env: MONGODB_URL, MONGODB_DB_NAME, SECRET_KEY, optional OPENAI_API_KEY / YOUTUBE_API_KEY / SMTP_*
+# Edit .env: MONGODB_URL, MONGODB_DB_NAME, SECRET_KEY, optional OPENAI_API_KEY / SMTP_*
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
@@ -109,7 +109,7 @@ GitHub Actions runs backend pytest (with `SKIP_DB_INIT`) and frontend `npm run b
 
 ## Environment variables
 
-See `Backend/.env.example` for all options (MongoDB, Redis, JWT, SMTP, Google OAuth client id, OpenAI, YouTube).
+See `Backend/.env.example` for all options (MongoDB, Redis, JWT, SMTP, Google OAuth client id, OpenAI).
 
 ## Notes
 

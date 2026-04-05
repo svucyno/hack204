@@ -1,9 +1,28 @@
-import { Navigate } from 'react-router-dom'
+import { useState } from 'react'
+import { Navigate, Link } from 'react-router-dom'
 import { LearnProgram } from '../components/LearnProgram'
 import { useAuth } from '../context/AuthContext'
+import { apiSuggestJobs } from '../lib/api'
 
 export function LearnPage() {
   const { token, me, profile, loading, logout, refreshMe } = useAuth()
+  
+  const [jobsData, setJobsData] = useState<{ title: string; explanation: string }[] | null>(null)
+  const [jobsLoading, setJobsLoading] = useState(false)
+
+  const handleSuggestJobs = async () => {
+    if (!token || !profile) return
+    setJobsLoading(true)
+    try {
+      const skillsArray = profile.skills.map(s => s.name)
+      const res = await apiSuggestJobs(token, { goal: profile.clientGoal || '', skills: skillsArray })
+      setJobsData(res.jobs)
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setJobsLoading(false)
+    }
+  }
 
   if (!loading && !token) {
     return <Navigate to="/login" replace />
@@ -47,6 +66,12 @@ export function LearnPage() {
             ) : null}
           </div>
           <div className="flex gap-2">
+            <Link
+              to="/dashboard"
+              className="rounded-lg border border-cyan-600/50 bg-cyan-950/30 px-3 py-1.5 text-xs font-semibold text-cyan-400 hover:bg-cyan-900/40 hover:text-cyan-300"
+            >
+              Dashboard
+            </Link>
             <button
               type="button"
               className="rounded-lg border border-zinc-600 px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800"
@@ -74,6 +99,30 @@ export function LearnPage() {
             ))}
           </div>
         ) : null}
+        
+        <div className="mb-6 rounded-xl border border-white/10 bg-zinc-900/40 p-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-zinc-200">Career Outlook</h2>
+            <button
+              type="button"
+              disabled={jobsLoading}
+              onClick={() => void handleSuggestJobs()}
+              className="rounded-lg bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-violet-500 disabled:opacity-50"
+            >
+              {jobsLoading ? 'Loading...' : 'Suggest Jobs'}
+            </button>
+          </div>
+          {jobsData && (
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              {jobsData.map((job, i) => (
+                <div key={i} className="rounded-lg border border-violet-500/20 bg-violet-950/20 p-3">
+                  <h3 className="text-sm font-semibold text-violet-200">{job.title}</h3>
+                  <p className="mt-1 text-xs text-zinc-400">{job.explanation}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         {token ? (
           <LearnProgram

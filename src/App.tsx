@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import { LearnPage } from './pages/LearnPage'
 import { LoginPage } from './pages/LoginPage'
 import { SignupPage } from './pages/SignupPage'
+import { DashboardPage } from './pages/DashboardPage'
 
 function HomeRoute() {
   const { token, me, loading } = useAuth()
@@ -13,7 +14,7 @@ function HomeRoute() {
       </div>
     )
   }
-  if (token && me?.onboardingComplete) return <Navigate to="/learn" replace />
+  if (token && me?.onboardingComplete) return <Navigate to="/dashboard" replace />
   if (token && me && !me.onboardingComplete)
     return <Navigate to="/signup" replace />
   return <Navigate to="/login" replace />
@@ -27,6 +28,7 @@ export default function App() {
           <Route path="/" element={<HomeRoute />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/learn" element={<LearnPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

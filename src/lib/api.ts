@@ -187,3 +187,18 @@ export async function apiAssistant(
   })
   return parseJson<{ reply: string }>(res)
 }
+
+export async function apiSuggestJobs(
+  token: string,
+  body: { goal: string; skills: string[] },
+) {
+  const res = await fetch(`${base()}/api/jobs/suggest`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(body),
+  })
+  return parseJson<{ jobs: { title: string; explanation: string }[] }>(res)
+}

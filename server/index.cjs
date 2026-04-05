@@ -18,6 +18,7 @@ const {
   templatesForPick,
   suggestFromGoal,
 } = require('./roadmapTemplates.cjs')
+const { suggestJobsBasedOnGoal } = require('./jobDataset.cjs')
 
 const JWT_SECRET =
   process.env.JWT_SECRET || 'dev-only-change-in-production-les-2026'
@@ -359,6 +360,16 @@ app.post('/api/assistant', authMiddleware, async (req, res) => {
       `• Write a 3‑sentence summary of the video in your own words.\n` +
       `• If it’s analytics: check definitions (metric vs dimension, cohort, funnel).`,
   })
+})
+
+app.post('/api/jobs/suggest', authMiddleware, (req, res) => {
+  const goal = String(req.body.goal || '').trim()
+  const skillsObjects = Array.isArray(req.body.skills) ? req.body.skills : []
+  const skills = skillsObjects.map(s => (typeof s === 'string' ? s : s.name || s.skill)).filter(Boolean)
+  
+  const jobs = suggestJobsBasedOnGoal(goal, skills)
+
+  res.json({ jobs })
 })
 
 app.put('/api/me/learning-state', authMiddleware, (req, res) => {

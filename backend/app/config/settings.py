@@ -30,7 +30,6 @@ class Settings(BaseSettings):
 
     openai_api_key: str = Field(default="", alias="OPENAI_API_KEY")
     gemini_api_key: str = Field(default="", alias="GEMINI_API_KEY")
-    youtube_api_key: str = Field(default="", alias="YOUTUBE_API_KEY")
 
     redis_url: str = Field(default="redis://localhost:6379/0", alias="REDIS_URL")
     mongodb_url: str = Field(default="mongodb://localhost:27017", alias="MONGODB_URL")
