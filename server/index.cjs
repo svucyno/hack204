@@ -313,17 +313,17 @@ app.post('/api/assistant', authMiddleware, async (req, res) => {
   if (!message) {
     return res.status(400).json({ error: 'message required' })
   }
-  const key = process.env.OPENAI_API_KEY
+  const key = process.env.GROQ_API_KEY
   if (key && key !== 'your_key_here') {
     try {
-      const r = await fetch('https://api.openai.com/v1/chat/completions', {
+      const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${key}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+          model: process.env.GROQ_MODEL || 'llama-3.1-8b-instant',
           messages: [
             {
               role: 'system',
@@ -351,15 +351,20 @@ app.post('/api/assistant', authMiddleware, async (req, res) => {
       return res.status(502).json({ error: 'AI request failed' })
     }
   }
-  res.json({
-    reply:
-      `Offline assistant (set OPENAI_API_KEY on the server for live AI).\n\n` +
-      `You asked: “${message.slice(0, 200)}${message.length > 200 ? '…' : ''}”\n\n` +
-      `• Split it into one 25‑minute focus block.\n` +
-      `• Re-run the practice questions for this unit.\n` +
-      `• Write a 3‑sentence summary of the video in your own words.\n` +
-      `• If it’s analytics: check definitions (metric vs dimension, cohort, funnel).`,
-  })
+  const msgLower = message.toLowerCase()
+  let fallbackReply = ''
+
+  if (msgLower.match(/\b(hi|hello|hey|greetings)\b/)) {
+    fallbackReply = "Hello there! I'm your offline learning assistant. I can't access live AI right now, but I'm here to cheer you on. Keep going with your daily exams!"
+  } else if (msgLower.includes('explain') || msgLower.includes('what is')) {
+    fallbackReply = "I'm currently in offline mode, so I can't generate a dynamic explanation. I strongly recommend checking the YouTube videos linked in this module, as they cover the core concepts in detail."
+  } else if (msgLower.includes('stuck') || msgLower.includes('help')) {
+    fallbackReply = "Feeling stuck? Try taking a 5-minute break. When you return, try re-running the practice questions for this unit to test your memory limits."
+  } else {
+    fallbackReply = `Offline assistant (set GROQ_API_KEY in .env for live AI).\n\nYou asked: "${message.slice(0, 100)}${message.length > 100 ? '...' : ''}"\n\nStudy Tips:\n• Work in 25-minute focus blocks.\n• Write a 3-sentence summary of what you just learned.\n• Break complex problems down to basic fundamentals.`
+  }
+
+  res.json({ reply: fallbackReply })
 })
 
 app.post('/api/resume/generate', authMiddleware, async (req, res) => {
@@ -368,17 +373,17 @@ app.post('/api/resume/generate', authMiddleware, async (req, res) => {
   const name = String(req.body.name || '').trim()
   const experienceStage = String(req.body.experienceStage || '').trim()
   
-  const key = process.env.OPENAI_API_KEY
+  const key = process.env.GROQ_API_KEY
   if (key && key !== 'your_key_here') {
     try {
-      const r = await fetch('https://api.openai.com/v1/chat/completions', {
+      const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${key}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+          model: process.env.GROQ_MODEL || 'llama-3.1-8b-instant',
           messages: [
             {
               role: 'system',

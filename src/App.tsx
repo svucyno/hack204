@@ -9,6 +9,7 @@ import { MentorPage } from './pages/MentorPage'
 import { ReportsPage } from './pages/ReportsPage'
 import { SettingsPage } from './pages/SettingsPage'
 import { ResumePage } from './pages/ResumePage'
+import { InterviewPage } from './pages/InterviewPage'
 
 function HomeRoute() {
   const { token, me, loading } = useAuth()
@@ -40,6 +41,7 @@ export default function App() {
           <Route path="/reports" element={<ReportsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/resume" element={<ResumePage />} />
+          <Route path="/interview" element={<InterviewPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>

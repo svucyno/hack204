@@ -260,7 +260,7 @@ class AIService:
         n: int,
         include_coding: bool,
     ) -> List[QuestionItem]:
-        api_key = settings.gemini_api_key or settings.openai_api_key
+        api_key = settings.gemini_api_key or settings.groq_api_key
         if not api_key:
             return self._mock_generate_mcq_questions(topic_ids, n, include_coding)
             

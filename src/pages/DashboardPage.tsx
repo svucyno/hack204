@@ -35,6 +35,7 @@ export function DashboardPage() {
         <nav className="hidden md:flex items-center gap-6 text-sm text-zinc-400">
           <Link to="/dashboard" className="text-zinc-200 hover:text-white">Dashboard</Link>
           <Link to="/learn" className="hover:text-white">Roadmap</Link>
+          <Link to="/interview" className="hover:text-white">Interview</Link>
           <Link to="/mentor" className="hover:text-white">Mentor</Link>
           <Link to="/reports" className="hover:text-white">Reports</Link>
           <Link to="/jobs" className="hover:text-white">Jobs</Link>
@@ -56,9 +57,20 @@ export function DashboardPage() {
             Track your progress, overcome weaknesses, and act on AI suggestions.
           </p>
           <div className="flex flex-wrap gap-4 shrink-0">
-            <button className="rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-3 font-bold text-white shadow-lg hover:shadow-orange-500/20 transition-all text-sm">
-              Start Daily Exam
-            </button>
+            <details className="relative group">
+              <summary className="cursor-pointer list-none rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-3 font-bold text-white shadow-lg hover:shadow-orange-500/20 transition-all text-sm flex items-center justify-center gap-2">
+                Practice Platforms
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
+              </summary>
+              <div className="absolute left-0 sm:right-0 sm:left-auto z-50 mt-2 w-56 rounded-xl border border-zinc-700 bg-zinc-900 shadow-2xl py-2 overflow-hidden">
+                <p className="px-4 py-2 text-xs font-bold text-zinc-500 uppercase tracking-widest border-b border-zinc-800 mb-1">Suggested Sites</p>
+                <a href="https://leetcode.com" target="_blank" rel="noreferrer" className="block px-4 py-2.5 text-sm text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors">LeetCode (DSA)</a>
+                <a href="https://hackerrank.com" target="_blank" rel="noreferrer" className="block px-4 py-2.5 text-sm text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors">HackerRank (Algorithms)</a>
+                <a href="https://www.codewars.com" target="_blank" rel="noreferrer" className="block px-4 py-2.5 text-sm text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors">CodeWars (Logic)</a>
+                <a href="https://www.frontendmentor.io" target="_blank" rel="noreferrer" className="block px-4 py-2.5 text-sm text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors">Frontend Mentor (UI/UX)</a>
+                <a href="https://app.datacamp.com" target="_blank" rel="noreferrer" className="block px-4 py-2.5 text-sm text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors">DataCamp (Analytics)</a>
+              </div>
+            </details>
             <Link to="/learn" className="rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-3 font-bold text-white shadow-lg hover:shadow-blue-500/20 transition-all text-sm block">
               View Roadmap
             </Link>

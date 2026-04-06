@@ -22,7 +22,8 @@ export type ProgramTrack = {
 }
 
 function v(title: string, id: string): VideoRef {
-  return { title, url: `https://www.youtube.com/watch?v=${id}` }
+  const safeQuery = encodeURIComponent(title)
+  return { title, url: `https://www.youtube.com/results?search_query=${safeQuery}` }
 }
 
 const analyticsUnitsBasic: ProgramUnit[] = [
@@ -30,7 +31,7 @@ const analyticsUnitsBasic: ProgramUnit[] = [
     id: 'da-1',
     title: 'What is data analytics?',
     summary: 'Roles, tools, and how analytics supports decisions.',
-    videos: [v('What Is Data Analytics? — overview', 'zCANbazqcPw')],
+    videos: [v('What Is Data Analytics? — overview', 'bG_km2EJeH4')],
     practice: [
       {
         question: 'What is the main purpose of data analytics?',
@@ -47,7 +48,7 @@ const analyticsUnitsBasic: ProgramUnit[] = [
     id: 'da-2',
     title: 'KPIs & metrics',
     summary: 'Leading vs lagging indicators and SMART KPIs.',
-    videos: [v('KPIs and performance metrics — intro', 'ryGrsedibQk')],
+    videos: [v('KPIs and performance metrics — intro', 'cPHS43OAR9I')],
     practice: [
       {
         question: 'A KPI should ideally be:',
@@ -60,7 +61,7 @@ const analyticsUnitsBasic: ProgramUnit[] = [
     id: 'da-3',
     title: 'SQL foundations',
     summary: 'SELECT, WHERE, GROUP BY mindset.',
-    videos: [v('SQL basics — short intro', 'w-0p3OEbpdQ')],
+    videos: [v('SQL basics — short intro', 'zsjvFFKOm3c')],
     practice: [
       {
         question: 'Which clause filters rows before grouping?',
@@ -73,7 +74,7 @@ const analyticsUnitsBasic: ProgramUnit[] = [
     id: 'da-4',
     title: 'Spreadsheets for analysis',
     summary: 'Cleaning, pivot tables, common pitfalls.',
-    videos: [v('Excel for data analysis — patterns', 'h9MbznbxlLw')],
+    videos: [v('Excel for data analysis — patterns', 'k1VUZEVuDJ8')],
     practice: [
       {
         question: 'Pivot tables are mainly used to:',
@@ -90,7 +91,7 @@ const analyticsUnitsBasic: ProgramUnit[] = [
     id: 'da-5',
     title: 'Data visualization principles',
     summary: 'Choosing chart types and avoiding clutter.',
-    videos: [v('Data visualization — core ideas', '5NZc51mGfvE')],
+    videos: [v('Data visualization — core ideas', 'sM2mHkUkiZk')],
     practice: [
       {
         question: 'For part-to-whole at a glance, often use:',
@@ -103,7 +104,7 @@ const analyticsUnitsBasic: ProgramUnit[] = [
     id: 'da-6',
     title: 'Statistics intuition',
     summary: 'Mean vs median, variance, sampling basics.',
-    videos: [v('Statistics — intuitive intro', '9yeOJ0ZMUYw')],
+    videos: [v('Statistics — intuitive intro', 'xxpc-HPKN28')],
     practice: [
       {
         question: 'The median is robust to:',
@@ -116,7 +117,7 @@ const analyticsUnitsBasic: ProgramUnit[] = [
     id: 'da-7',
     title: 'Dashboards & storytelling',
     summary: 'Narrative, audience, and iteration.',
-    videos: [v('Dashboard design tips', 'WWrIopw1MrA')],
+    videos: [v('Dashboard design tips', 'kX_0EELpDzc')],
     practice: [
       {
         question: 'A good analytics story should:',
@@ -133,7 +134,7 @@ const analyticsUnitsBasic: ProgramUnit[] = [
     id: 'da-8',
     title: 'A/B testing basics',
     summary: 'Hypothesis, sample size, ethics.',
-    videos: [v('A/B testing explained', 'zFMgYeJPMjg')],
+    videos: [v('A/B testing explained', '7qGWV-WjIE8')],
     practice: [
       {
         question: 'A/B tests compare:',
@@ -150,7 +151,7 @@ const analyticsUnitsBasic: ProgramUnit[] = [
     id: 'da-9',
     title: 'Career path & portfolio',
     summary: 'Projects that prove analytics skills.',
-    videos: [v('Analytics portfolio ideas', '1uFVOnVOj2s')],
+    videos: [v('Analytics portfolio ideas', '8dWL3wF_OMw')],
     practice: [
       {
         question: 'A strong portfolio piece usually includes:',
@@ -192,7 +193,7 @@ const webUnitsBasic: ProgramUnit[] = [
     id: 'w-1',
     title: 'Modern JavaScript essentials',
     summary: 'Variables, functions, async thinking.',
-    videos: [v('JavaScript in 100 seconds', 'DHjqpvDnNGE')],
+    videos: [v('JavaScript in 100 seconds', 'upDLs1sn7g4')],
     practice: [
       {
         question: '`const` bindings are:',
@@ -226,7 +227,7 @@ const webUnitsBasic: ProgramUnit[] = [
     id: 'w-3',
     title: 'REST APIs',
     summary: 'HTTP verbs, status codes, JSON.',
-    videos: [v('REST API concepts', 'SLwpqD4nZLI')],
+    videos: [v('REST API concepts', '-mN3VyJuCjM')],
     practice: [
       {
         question: 'Which verb is idempotent for updates?',
@@ -239,7 +240,7 @@ const webUnitsBasic: ProgramUnit[] = [
     id: 'w-4',
     title: 'Git workflow',
     summary: 'Branches, PRs, clean history.',
-    videos: [v('Git & GitHub quick intro', 'RGOj5yH7evk')],
+    videos: [v('Git & GitHub quick intro', '8JJ101D3knE')],
     practice: [
       {
         question: 'Before opening a PR you usually:',
@@ -256,7 +257,7 @@ const webUnitsBasic: ProgramUnit[] = [
     id: 'w-5',
     title: 'Node & Express',
     summary: 'Server structure, middleware.',
-    videos: [v('Node.js intro', 'TlB_eWDSMt4')],
+    videos: [v('Node.js intro', 'ENrzD9HAZK4')],
     practice: [
       {
         question: 'Middleware in Express runs:',
@@ -273,7 +274,7 @@ const webUnitsBasic: ProgramUnit[] = [
     id: 'w-6',
     title: 'MongoDB basics',
     summary: 'Documents, indexes, queries.',
-    videos: [v('MongoDB in 100 seconds', 'pSWmPLHiR10')],
+    videos: [v('MongoDB in 100 seconds', '-bt_y4Loofg')],
     practice: [
       {
         question: 'MongoDB stores documents as:',
@@ -286,7 +287,7 @@ const webUnitsBasic: ProgramUnit[] = [
     id: 'w-7',
     title: 'Auth & security mindset',
     summary: 'JWT, cookies, OWASP basics.',
-    videos: [v('Web security concepts', 'inWWhrCtnko')],
+    videos: [v('Web security concepts', 'mbsmsiPbO1M')],
     practice: [
       {
         question: 'Passwords should be stored:',
@@ -299,7 +300,7 @@ const webUnitsBasic: ProgramUnit[] = [
     id: 'w-8',
     title: 'Deployment',
     summary: 'Environments, env vars, health checks.',
-    videos: [v('Deploying apps — overview', 'kRYP1t6GeXA')],
+    videos: [v('Deploying apps — overview', 'OqE_xH7KbsA')],
     practice: [
       {
         question: 'Secrets like API keys belong in:',
@@ -316,7 +317,7 @@ const webUnitsBasic: ProgramUnit[] = [
     id: 'w-9',
     title: 'Capstone planning',
     summary: 'Scope, README, demo.',
-    videos: [v('Shipping a portfolio project', 'ONvbFTigWqE')],
+    videos: [v('Shipping a portfolio project', 'pKd0Rpw7O48')],
     practice: [
       {
         question: 'A capstone README should include:',

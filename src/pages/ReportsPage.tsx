@@ -34,9 +34,9 @@ export function ReportsPage() {
     isMockData = true
     examHistoryData = [
       { examId: "EX-101", topic: "React Basics", date: "2026-03-20", score: 85, passMark: 70 },
-      { examId: "EX-102", topic: "Database Architecture", date: "2026-03-24", score: 92, passMark: 70 },
-      { examId: "EX-103", topic: "Node.js REST APIs", date: "2026-03-28", score: 68, passMark: 70 },
-      { examId: "EX-104", topic: "Authentication", date: "2026-04-01", score: 88, passMark: 70 },
+      { examId: "EX-102", topic: "Database Architecture", date: "2026-03-24", score: 90, passMark: 70 },
+      { examId: "EX-103", topic: "Node.js REST APIs", date: "2026-03-28", score: 65, passMark: 70 },
+      { examId: "EX-104", topic: "Authentication", date: "2026-04-01", score: 80, passMark: 70 },
       { examId: "EX-105", topic: "Serverless Deployment", date: "2026-04-05", score: 95, passMark: 70 },
     ]
   }
@@ -48,6 +48,7 @@ export function ReportsPage() {
         <nav className="hidden md:flex items-center gap-6 text-sm text-zinc-400">
           <Link to="/dashboard" className="hover:text-white">Dashboard</Link>
           <Link to="/learn" className="hover:text-white">Roadmap</Link>
+          <Link to="/interview" className="hover:text-white">Interview</Link>
           <Link to="/mentor" className="hover:text-white">Mentor</Link>
           <Link to="/reports" className="text-zinc-200 hover:text-white">Reports</Link>
           <Link to="/jobs" className="hover:text-white">Jobs</Link>
@@ -132,7 +133,7 @@ export function ReportsPage() {
                     <td className="px-6 py-4 text-sm text-zinc-400">{exam.date}</td>
                     <td className="px-6 py-4 text-sm text-right font-bold">
                       <span className={exam.score >= exam.passMark ? 'text-emerald-400' : 'text-danger-400'} style={{ color: exam.score >= exam.passMark ? '#34d399' : '#f87171' }}>
-                        {exam.score}%
+                        {exam.score}% <span className="text-xs font-normal opacity-70 ml-1">({Math.round((exam.score / 100) * 20)}/20 bits)</span>
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-center">

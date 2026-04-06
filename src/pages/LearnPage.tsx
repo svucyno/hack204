@@ -49,6 +49,7 @@ export function LearnPage() {
         <nav className="hidden md:flex items-center gap-6 text-sm text-zinc-400">
           <Link to="/dashboard" className="hover:text-white">Dashboard</Link>
           <Link to="/learn" className="text-zinc-200 hover:text-white">Roadmap</Link>
+          <Link to="/interview" className="hover:text-white">Interview</Link>
           <Link to="/mentor" className="hover:text-white">Mentor</Link>
           <Link to="/reports" className="hover:text-white">Reports</Link>
           <Link to="/jobs" className="hover:text-white">Jobs</Link>

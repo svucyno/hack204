@@ -28,7 +28,7 @@ class Settings(BaseSettings):
 
     cors_origins: str = Field(default="http://localhost:5173,http://127.0.0.1:5173", alias="CORS_ORIGINS")
 
-    openai_api_key: str = Field(default="", alias="OPENAI_API_KEY")
+    groq_api_key: str = Field(default="", alias="GROQ_API_KEY")
     gemini_api_key: str = Field(default="", alias="GEMINI_API_KEY")
 
     redis_url: str = Field(default="redis://localhost:6379/0", alias="REDIS_URL")

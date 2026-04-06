@@ -7,6 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { apiLogin, apiMe, apiRegister, type MeResponse } from '../lib/api'
 
 type AuthContextValue = {
@@ -26,6 +27,8 @@ const STORAGE = 'les_token'
 const AuthContext = createContext<AuthContextValue | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const navigate = useNavigate()
+  
   const [token, setToken] = useState<string | null>(() =>
     typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE) : null,
   )
@@ -52,10 +55,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setMe(null)
       setProfile(null)
       setLearningState(null)
+      navigate('/login')
     } finally {
       setLoading(false)
     }
-  }, [token])
+  }, [token, navigate])
 
   useEffect(() => {
     void refreshMe()
@@ -93,7 +97,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setMe(null)
     setProfile(null)
     setLearningState(null)
-  }, [])
+    navigate('/login')
+  }, [navigate])
 
   const value = useMemo(
     () => ({

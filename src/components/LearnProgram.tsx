@@ -178,7 +178,7 @@ export function LearnProgram({
 
   useEffect(() => {
     if (unit) {
-      setAnswers(unit.practice.map(() => 0))
+      setAnswers(unit.practice.map(() => -1))
       setPracticeResult(null)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- reset form when switching unit id only
@@ -201,33 +201,49 @@ export function LearnProgram({
 
   function submitPractice() {
     if (!unit) return
+    if (answers.includes(-1)) {
+      setPracticeResult('Please answer all questions before submitting.')
+      return
+    }
     const pct = scorePractice(unit, answers)
-    setPracticeResult(`Score: ${pct}%`)
-    if (pct < PASS) return
+    const passed = pct >= PASS
+    
+    if (passed) {
+      setPracticeResult(`Passed! Score: ${pct}%`)
+    } else {
+      setPracticeResult(`Failed. Score: ${pct}%. Saving to reports...`)
+    }
 
     setProgress((prev) => {
       if (!prev) return prev
       const done = new Set(prev.completedUnitIds)
       const already = done.has(unit.id)
-      const completedUnitIds = already
-        ? prev.completedUnitIds
-        : [...prev.completedUnitIds, unit.id]
-      const unitScores = { ...prev.unitScores, [unit.id]: pct }
-      const nextIndex =
-        idx + 1 < units.length ? idx + 1 : idx
+      
+      let completedUnitIds = prev.completedUnitIds
+      let nextIndex = idx
       let milestonesEarned = [...prev.milestonesEarned]
-      const n = completedUnitIds.length
-      const every = track.milestoneEvery
-      if (n > 0 && n % every === 0) {
-        const phase = n / every
-        if (!milestonesEarned.includes(phase)) {
-          milestonesEarned = [...milestonesEarned, phase]
-          setPendingMilestone(phase)
+      let streakPart = { streak: prev.streak, lastStreakDate: prev.lastStreakDate }
+
+      if (passed && !already) {
+        completedUnitIds = [...prev.completedUnitIds, unit.id]
+        if (idx + 1 < units.length) {
+          nextIndex = idx + 1
         }
+        
+        const n = completedUnitIds.length
+        const every = track.milestoneEvery
+        if (n > 0 && n % every === 0) {
+          const phase = n / every
+          if (!milestonesEarned.includes(phase)) {
+            milestonesEarned = [...milestonesEarned, phase]
+            setPendingMilestone(phase)
+          }
+        }
+        streakPart = bumpStreak(prev)
       }
-      const streakPart = already
-        ? { streak: prev.streak, lastStreakDate: prev.lastStreakDate }
-        : bumpStreak(prev)
+
+      const unitScores = { ...prev.unitScores, [unit.id]: pct }
+      
       const next: LearningProgressStateV1 = {
         version: 1,
         completedUnitIds,
@@ -239,6 +255,17 @@ export function LearnProgram({
         updatedAt: new Date().toISOString(),
       }
       persist(next)
+      
+      if (!passed) {
+        setTimeout(() => {
+          window.location.href = '/reports'
+        }, 1500)
+      } else {
+        setTimeout(() => {
+          window.location.reload()
+        }, 1500)
+      }
+      
       return next
     })
   }
@@ -410,13 +437,7 @@ export function LearnProgram({
               )}
             </div>
           </details>
-          <button
-            type="button"
-            className="rounded-lg border border-violet-500/50 bg-violet-950/40 px-2.5 py-1 text-xs font-medium text-violet-200 hover:bg-violet-900/50"
-            onClick={() => setAiOpen((o) => !o)}
-          >
-            AI
-          </button>
+
           <details className="relative">
             <summary className="cursor-pointer list-none rounded-lg border border-zinc-600 px-2.5 py-1 text-xs text-zinc-200 hover:bg-zinc-800">
               Progress
@@ -563,7 +584,7 @@ export function LearnProgram({
       </div>
 
       {aiOpen ? (
-        <div className="fixed bottom-4 right-4 z-40 flex max-h-[min(480px,70vh)] w-[min(100%,360px)] flex-col rounded-2xl border border-violet-500/40 bg-zinc-900/95 p-4 shadow-2xl backdrop-blur">
+        <div className="fixed bottom-24 right-6 z-40 flex max-h-[min(480px,70vh)] w-[min(100%,360px)] flex-col rounded-2xl border border-violet-500/40 bg-zinc-900/95 p-4 shadow-2xl backdrop-blur">
           <div className="mb-2 flex items-center justify-between">
             <p className="text-sm font-semibold text-violet-200">AI assistant</p>
             <button
@@ -575,8 +596,8 @@ export function LearnProgram({
             </button>
           </div>
           <textarea
-            className="mb-2 min-h-[72px] w-full rounded-lg border border-zinc-600 bg-zinc-950 p-2 text-sm text-zinc-100"
-            placeholder="Ask about this unit…"
+            className="mb-2 min-h-[72px] w-full rounded-lg border border-zinc-600 bg-zinc-950 p-2 text-sm text-zinc-100 placeholder-zinc-500"
+            placeholder="Ask about this unit..."
             value={aiMsg}
             onChange={(e) => setAiMsg(e.target.value)}
           />
@@ -584,17 +605,31 @@ export function LearnProgram({
             type="button"
             disabled={aiBusy}
             onClick={() => void sendAi()}
-            className="mb-2 rounded-lg bg-violet-600 py-2 text-sm font-semibold text-white hover:bg-violet-500 disabled:opacity-50"
+            className="mb-2 rounded-lg bg-violet-600 py-2 text-sm font-semibold text-white hover:bg-violet-500 disabled:opacity-50 transition"
           >
-            {aiBusy ? '…' : 'Send'}
+            {aiBusy ? '...' : 'Send Message'}
           </button>
           {aiReply ? (
-            <pre className="max-h-52 flex-1 overflow-auto whitespace-pre-wrap rounded-lg bg-zinc-950/80 p-2 text-xs text-zinc-300">
+            <pre className="max-h-52 flex-1 overflow-auto whitespace-pre-wrap rounded-lg bg-zinc-950/80 p-3 text-xs text-zinc-300 shadow-inner">
               {aiReply}
             </pre>
           ) : null}
         </div>
       ) : null}
+
+      {/* Floating Chat Bubble Matching Dashboard */}
+      <div 
+        onClick={() => setAiOpen(o => !o)}
+        className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-[#008cff] shadow-xl shadow-[#008cff]/30 flex items-center justify-center cursor-pointer hover:bg-[#007be0] transition-colors z-50 text-white"
+      >
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          {aiOpen ? (
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+          ) : (
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+          )}
+        </svg>
+      </div>
 
       {pendingMilestone != null ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur">
